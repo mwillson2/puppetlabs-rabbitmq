@@ -29,6 +29,7 @@ class rabbitmq(
   $service_ensure             = $rabbitmq::params::service_ensure,
   $service_manage             = $rabbitmq::params::service_manage,
   $service_name               = $rabbitmq::params::service_name,
+  $shovel_enable	      = $rabbitmq::params::shovel_enable,
   $ssl                        = $rabbitmq::params::ssl,
   $ssl_only                   = $rabbitmq::params::ssl_only,
   $ssl_cacert                 = $rabbitmq::params::ssl_cacert,
@@ -90,6 +91,7 @@ class rabbitmq(
   validate_re($service_ensure, '^(running|stopped)$')
   validate_bool($service_manage)
   validate_string($service_name)
+  validate_bool($shovel_enable)
   validate_bool($ssl)
   validate_bool($ssl_only)
   validate_string($ssl_cacert)
@@ -150,7 +152,22 @@ class rabbitmq(
 
     Class['::rabbitmq::service'] -> Class['::rabbitmq::install::rabbitmqadmin']
   }
-
+  if $shovel_enable {
+    rabbitmq_plugin { 'rabbitmq_shovel':
+      ensure  => present,
+      require => Class['rabbitmq::install'],
+      notify  => Class['rabbitmq::service'],
+      provider => 'rabbitmqplugins'
+    }
+  } 
+ if $shovel_enable and $service_manage {
+   rabbitmq_plugin { 'rabbitmq_shovel_management': 
+      ensure  => present,
+      require => Class['rabbitmq::install'],
+      notify  => Class['rabbitmq::service'],
+      provider => 'rabbitmqplugins'
+    }
+  }
   if $stomp_ensure {
     rabbitmq_plugin { 'rabbitmq_stomp':
       ensure  => present,
