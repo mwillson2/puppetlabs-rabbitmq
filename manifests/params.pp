@@ -73,6 +73,7 @@ class rabbitmq::params {
   $plugin_dir                 = "/usr/lib/rabbitmq/lib/rabbitmq_server-${version}/plugins"
   $port                       = '5672'
   $tcp_keepalive              = false
+  $shovel_enable              = false
   $ssl                        = false
   $ssl_only                   = false
   $ssl_cacert                 = 'UNSET'
