@@ -40,22 +40,16 @@ if Puppet::PUPPETVERSION.to_f < 3
     if resource[:sourceuri].nil?
       raise Puppet::Error, "null source uri"
     end
-    if resource[:sourcevhost].nil?
-      raise Puppet::Error, "null source vhost"
-    end
     if resource[:sourcequeue].nil?
       raise Puppet::Error, "null source queue"
     end
     if resource[:desturi].nil?
       raise Puppet::Error, "null destination uri"
     end
-    if resource[:destvhost].nil?
-      raise Puppet::Error, "null destination vhost"
-    end
     if resource[:destqueue].nil?
       raise Puppet::Error, "null destination queue"
     end
-    rabbitmqctl('set_parameter', 'shovel', resource[:name], resource[:sourcevhost], resource[:sourcequeue], resource[:destvhost], resource[:destqueue], resource[:desturi], resource[:sourceuri])
+    rabbitmqctl('set_parameter', 'shovel', resource[:name], resource[:sourceuri], resource[:sourcequeue], resource[:desturi], resource[:destqueue])
   end
 
   def destroy
