@@ -53,7 +53,7 @@ if Puppet::PUPPETVERSION.to_f < 3
   end
 
   def destroy
-    rabbitmqctl('clear_parameter', resource[:name])
+    rabbitmqctl('clear_parameter', 'shovel', resource[:name])
   end
   def check_for_shovel(string)
      begin
