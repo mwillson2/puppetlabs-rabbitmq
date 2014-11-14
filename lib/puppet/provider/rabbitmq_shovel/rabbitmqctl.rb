@@ -1,5 +1,3 @@
-require puppet
-require set
 Puppet::Type.type(:rabbitmq_shovel).provide(:rabbitmq_ctl) do
 
 if Puppet::PUPPETVERSION.to_f < 3
@@ -10,7 +8,7 @@ if Puppet::PUPPETVERSION.to_f < 3
      end
   end
 
-  defaultfor :feature => :posix
+#  defaultfor :feature => :posix
 
 #  def self.instances
 #    rabbitmqctl('-q', 'list_parameters').split(/\n/).collect do |line|
@@ -34,7 +32,7 @@ if Puppet::PUPPETVERSION.to_f < 3
  # def self.get_shovel_source_parameters(string)
      
   def create
-    if resource[:name].nil?
+    if resource[:label].nil?
       raise Puppet::Error, "null shovel name"
     end
     if resource[:sourceuri].nil?
@@ -49,14 +47,14 @@ if Puppet::PUPPETVERSION.to_f < 3
     if resource[:destqueue].nil?
       raise Puppet::Error, "null destination queue"
     end
-    rabbitmqctl('set_parameter', 'shovel', resource[:name], resource[:sourceuri], resource[:sourcequeue], resource[:desturi], resource[:destqueue])
+    shovel_string = String.new(%({ "src-uri": "#{resource[:sourceuri]}", "src-queue": "#{resource[:sourcequeue]}", "dest-uri": "#{resource[:desturi]}", "dest-queue": "#{resource[:destqueue]}"}))
+    rabbitmqctl('set_parameter', 'shovel', resource[:label], shovel_string)
   end
 
   def destroy
-    rabbitmqctl('clear_parameter', 'shovel', resource[:name])
+    rabbitmqctl('clear_parameter', 'shovel', resource[:label])
   end
   def check_for_shovel(string)
-     begin
       rabbitmqctl('-q', 'list_parameters').split(/\n/).detect do |line|
         line_regex = /(shovel+\s+)(\S+)/
         if ! line_regex.match(line).nil? 
@@ -67,15 +65,13 @@ if Puppet::PUPPETVERSION.to_f < 3
       end
     end
   def exists?
-      check_for_shovel(resource[:name]) != nil
+      check_for_shovel(resource[:label]) != nil
   end
+end
 #    rabbitmqctl('-q', 'list_parameters').split(/\n/).detect do |line|
 #      line_regex = /(shovel+\s+)(\S+)/
 #      line_regex.match(line)
 #      if ! $~.nil?
 #        if ! $2 == #{resource[:name]}
 #          return nil  
-           
 #    end
-
-  #end

@@ -40,7 +40,12 @@ Puppet::Type.type(:rabbitmq_plugin).provide(:rabbitmqplugins) do
 
   def exists?
     rabbitmqplugins('list', '-E').split(/\n/).detect do |line|
-      line.split(/\s+/)[1].match(/^#{resource[:name]}$/)
+     line.split(/\s+/).detect do |plugname|
+       plugname.match(/^#{resource[:name]}$/)
+        if ! $~.nil?
+        $~
+        end
+       end
     end
   end
 
