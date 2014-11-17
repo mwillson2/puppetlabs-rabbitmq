@@ -47,8 +47,11 @@ if Puppet::PUPPETVERSION.to_f < 3
     if resource[:destqueue].nil?
       raise Puppet::Error, "null destination queue"
     end
+    if check_for_shovel(resource[:label]).nil?
+      puts check_for_shovel(resource[:label])
     shovel_string = String.new(%({ "src-uri": "#{resource[:sourceuri]}", "src-queue": "#{resource[:sourcequeue]}", "dest-uri": "#{resource[:desturi]}", "dest-queue": "#{resource[:destqueue]}"}))
     rabbitmqctl('set_parameter', 'shovel', resource[:label], shovel_string)
+    end
   end
 
   def destroy
@@ -58,9 +61,7 @@ if Puppet::PUPPETVERSION.to_f < 3
       rabbitmqctl('-q', 'list_parameters').split(/\n/).detect do |line|
         line_regex = /(shovel+\s+)(\S+)/
         if ! line_regex.match(line).nil? 
-          if ! $2 == string
-             return string
-          end
+             return $2
         end
       end
     end
