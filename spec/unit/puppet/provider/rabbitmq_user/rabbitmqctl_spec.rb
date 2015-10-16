@@ -99,7 +99,7 @@ icinga  [monitoring]
 kitchen []
 kitchen2        [abc, def, ghi]
 EOT
-    @provider.expects(:rabbitmqctl).with('set_user_tags', 'foo', ['bar','baz', 'administrator'].sort) 
+    @provider.expects(:rabbitmqctl).with('set_user_tags', 'foo', ['bar','baz', 'administrator'].sort)
     @provider.admin=:true
   end
   it 'should be able to unset admin value' do
@@ -118,7 +118,7 @@ icinga  [monitoring]
 kitchen []
 kitchen2        [abc, def, ghi]
 EOT
-    @provider.expects(:rabbitmqctl).with('set_user_tags', 'foo', ['bar','baz'].sort) 
+    @provider.expects(:rabbitmqctl).with('set_user_tags', 'foo', ['bar','baz'].sort)
     @provider.admin=:false
   end
 
@@ -194,4 +194,22 @@ EOT
     @provider.create
   end
 
+  it 'should not return the administrator tag in tags for admins' do
+    @resource[:tags] = []
+    @resource[:admin]  = true
+    @provider.expects(:rabbitmqctl).with('-q', 'list_users').returns <<-EOT
+foo [administrator]
+EOT
+    @provider.tags.should == []
+  end
+
+  it 'should return the administrator tag for non-admins' do
+    # this should not happen though.
+    @resource[:tags] = []
+    @resource[:admin]  = :false
+    @provider.expects(:rabbitmqctl).with('-q', 'list_users').returns <<-EOT
+foo [administrator]
+EOT
+    @provider.tags.should == ["administrator"]
+  end
 end
