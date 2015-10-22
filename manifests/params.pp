@@ -41,7 +41,6 @@ class rabbitmq::params {
       $package_name     = 'rabbitmq-server'
       $service_name     = 'rabbitmq-server'
       $package_provider = 'rpm'
-<<<<<<< HEAD
       $version          = '3.4.1-1'
       $base_version     = regsubst($version,'^(.*)-\d$','\1')
       # This must remain at the end as we need $base_version and $version defined first.
