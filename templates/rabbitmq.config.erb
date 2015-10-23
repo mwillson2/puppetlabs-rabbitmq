@@ -6,7 +6,7 @@
 <%- end -%>
   {rabbit, [
 <% if @ldap_auth -%>
-    {auth_backends, [rabbit_auth_backend_internal, rabbit_auth_backend_ldap]},
+    {auth_backends, [{rabbit_auth_backend_ldap, rabbit_auth_backend_internal},rabbit_auth_backend_internal]},
 <% end -%>
 <% if @config_cluster -%>
     {cluster_nodes, {[<%= @cluster_nodes.map { |n| "\'rabbit@#{n}\'" }.join(', ') %>], <%= @cluster_node_type %>}},
