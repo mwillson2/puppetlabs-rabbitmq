@@ -69,7 +69,7 @@ class rabbitmq(
   $key_content                = undef,
 ) inherits rabbitmq::params {
 
-  validate_bool($admin_enable)
+  validate_bool(str2bool($admin_enable))
   # Validate install parameters.
   validate_re($package_apt_pin, '^(|\d+)$')
   validate_string($package_ensure)
